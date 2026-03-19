@@ -14,10 +14,10 @@ export const AudioProvider = ({ children }) => {
     // Function to initialize the Audio Engine
     const initAudio = () => {
         if (!audioContextRef.current) {
-            // 1. Create Audio Context
+            // Audio Context
             audioContextRef.current = new (window.AudioContext || window.webkitAudioContext)();
 
-            // 2. Create Analyser Node (This is the "Wow Factor" data source)
+            //  Analyser Node (
             analyserRef.current = audioContextRef.current.createAnalyser();
             analyserRef.current.fftSize = 256; // High frequency resolution
 

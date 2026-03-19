@@ -70,10 +70,10 @@ const Visualizer = () => {
 
         // --- Animation Control Logic ---
         if (isPlaying) {
-            // Agar playing hai, toh animation shuru karo
+            // if playing start animation
             draw();
         } else {
-            // Agar paused hai, toh animation stop karo memory bachane ke liye
+            //stop animation
             cancelAnimationFrame(animationFrameId.current);
             // Optional: Clear canvas on pause
             canvasCtx.clearRect(0, 0, canvas.width, canvas.height);

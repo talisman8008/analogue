@@ -6,10 +6,7 @@ import mySong from './assets/Future.mp3'
 
 function App() {
   const { isPlaying, togglePlay, audioRef } = useContext(AudioContext);
-
-  // Yeh tab chalega jab tu koi song select karega
-  // Abhi ke liye hum hardcoded path use kar rahe hain test karne ke liye
-  // const testSong = "/test.mp3"; // Make sure ye file public folder mein ho
+  // const testSong = "/test.mp3";
 
   return (
       <div className="min-h-screen flex items-center justify-center p-4">
@@ -27,7 +24,7 @@ function App() {
             <p className="text-cyan-400 font-medium opacity-80">Devesh's Audio Engine</p>
           </div>
 
-          {/* Visualizer Placeholder - Real magic yahan hoga */}
+          {/* Visualizer*/}
           <Visualizer />
 
           {/* Simple Controls */}
