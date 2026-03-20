@@ -2,7 +2,7 @@
 
 /* Yahan tu apni custom global styles daal sakta hai */
 body {
-  @apply bg-[#0f172a] text-white selection:bg-cyan-500/30;
+  @apply bg-[#020818] text-white selection:bg-cyan-500/30;
   margin: 0;
   font-family: 'Inter', sans-serif;
 }

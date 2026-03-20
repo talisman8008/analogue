@@ -7,31 +7,37 @@ export const AudioProvider = ({ children }) => {
     const audioContextRef = useRef(null);
     const analyserRef = useRef(null);
     const sourceRef = useRef(null);
+    const gainNodeRef = useRef(null);
 
     const [isPlaying, setIsPlaying] = useState(false);
     const [currentTrack, setCurrentTrack] = useState(null);
+    const [volume, setVolume] = useState(0.8);
 
-    // Function to initialize the Audio Engine
+    // --- PROGRESS BAR STATES ---
+    const [progress, setProgress] = useState(0);
+    const [currentTime, setCurrentTime] = useState(0);
+    const [duration, setDuration] = useState(0);
+
     const initAudio = () => {
         if (!audioContextRef.current) {
-            // Audio Context
             audioContextRef.current = new (window.AudioContext || window.webkitAudioContext)();
 
-            //  Analyser Node (
             analyserRef.current = audioContextRef.current.createAnalyser();
-            analyserRef.current.fftSize = 256; // High frequency resolution
+            analyserRef.current.fftSize = 256;
 
-            // 3. Connect Audio Element to Context
+            gainNodeRef.current = audioContextRef.current.createGain();
+            gainNodeRef.current.gain.value = volume;
+
             sourceRef.current = audioContextRef.current.createMediaElementSource(audioRef.current);
+
             sourceRef.current.connect(analyserRef.current);
-            analyserRef.current.connect(audioContextRef.current.destination);
+            analyserRef.current.connect(gainNodeRef.current);
+            gainNodeRef.current.connect(audioContextRef.current.destination);
         }
     };
 
     const togglePlay = () => {
-        initAudio(); // Initialize on first click
-
-        // Chrome/Edge "Resume" fix
+        initAudio();
         if (audioContextRef.current.state === 'suspended') {
             audioContextRef.current.resume();
         }
@@ -44,13 +50,50 @@ export const AudioProvider = ({ children }) => {
         setIsPlaying(!isPlaying);
     };
 
+    const handleVolumeChange = (e) => {
+        const newVol = parseFloat(e.target.value);
+        setVolume(newVol);
+        if (gainNodeRef.current) {
+            gainNodeRef.current.gain.value = newVol;
+        }
+    };
+
+    // --- PROGRESS BAR LOGIC ---
+    const handleTimeUpdate = () => {
+        const current = audioRef.current.currentTime;
+        const dur = audioRef.current.duration;
+        setCurrentTime(current);
+        if (dur) {
+            setDuration(dur);
+            setProgress((current / dur) * 100);
+        }
+    };
+
+    const handleSeek = (e) => {
+        const seekTime = (e.target.value / 100) * duration;
+        audioRef.current.currentTime = seekTime;
+        setProgress(e.target.value);
+    };
+
+    const formatTime = (time) => {
+        if (!time || isNaN(time)) return "0:00";
+        const minutes = Math.floor(time / 60);
+        const seconds = Math.floor(time % 60);
+        return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+    };
+
     return (
-        <AudioContext.Provider value={{ audioRef, isPlaying, togglePlay, analyserRef, currentTrack, setCurrentTrack }}>
+        <AudioContext.Provider value={{
+            audioRef, isPlaying, togglePlay, analyserRef, currentTrack, setCurrentTrack,
+            volume, handleVolumeChange,
+            progress, currentTime, duration, handleSeek, formatTime // Exporting progress logic
+        }}>
             {children}
-            {/* Hidden Audio Tag: All logic happens here */}
             <audio
                 ref={audioRef}
                 onEnded={() => setIsPlaying(false)}
+                onTimeUpdate={handleTimeUpdate} // Yeh zaroori hai time track karne ke liye
+                onLoadedMetadata={handleTimeUpdate} // Gaana load hote hi duration set karega
                 crossOrigin="anonymous"
             />
         </AudioContext.Provider>
