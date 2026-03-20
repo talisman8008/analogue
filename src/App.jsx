@@ -3,6 +3,7 @@ import { AudioContext } from './context/AudioContext';
 import { Play, Pause, Disc, Volume2,Upload } from 'lucide-react';
 import Visualizer from './components/Visualizer';
 import mySong from './assets/Future.mp3'
+import Orb from './components/heroBg.jsx';
 
 function App() {
     const {
@@ -12,7 +13,8 @@ function App() {
     } = useContext(AudioContext);
 
     const fileInputRef = useRef(null);
-    const [trackName, setTrackName] = useState("Bella");
+    const [trackName, setTrackName] = useState("Please Upload Your Fav mp3 file");
+
     const handleFile = (e) => {
         const file = e.target.files[0];
         if(file){
@@ -26,7 +28,18 @@ function App() {
 
     return (
         <div className="min-h-screen flex items-center justify-center p-4">
-            <nav className=" fixed top-0 left-0 z-50 flex items-center justify-between w-full px-6 py-4 bg-black/40 backdrop-blur-xl border-b border-white/10">
+
+            <div className="absolute inset-0 w-full h-full z-0">
+                {/* Orb component */}
+                <Orb
+                    hoverIntensity={0.5}
+                    rotateOnHover={true}
+                    forceHoverState={false}
+                />
+            </div>
+
+                            {/*NAVBAR*/}
+            <nav className=" fixed top-0 left-0 z-50 flex items-center justify-between w-full px-6 py-4 bg-black/100 backdrop-blur-lg border-b border-white/10">
                 <div className="flex items-center ">
                     Logo
                 </div>
@@ -40,6 +53,7 @@ function App() {
                     Live
                 </div>
             </nav>
+
 
 
             <div className="w-full max-w-md mt-[55px] bg-white/10 backdrop-blur-xl border border-white/20 rounded-[2.5rem] p-8 shadow-2xl">
@@ -66,7 +80,7 @@ function App() {
                         <div className="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-all" />
                     </div>
                     <h1 className="text-2xl font-bold tracking-tight text-center px-4 truncate w-full">{trackName}</h1>
-                    <p className="text-cyan-400 font-medium opacity-80 uppercase tracking-widest text-[10px] mt-1">{trackName==="Project BeatViz"?"Active Session":"Local Playback" }</p>
+                    {/*<p className="text-cyan-400 font-medium opacity-80 uppercase tracking-widest text-[10px] mt-1">{trackName==="Project BeatViz"?"Active Session":"Local Playback" }</p>*/}
                 </div>
 
                 <Visualizer />
